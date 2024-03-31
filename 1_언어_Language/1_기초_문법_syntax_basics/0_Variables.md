@@ -112,6 +112,7 @@ void main() {
   description = 'Feijoada!';
   print(description);
 }
+```
 
 ```
 주의
@@ -198,7 +199,8 @@ const set = {if (list is List<int>) ...list}; // ...를 사용하여 전개하�
 ```
 노트
 
-final 객체는 수정될 수 없지만, final 객체의 필드는 바뀔 수 있습니다. 비교하자면 const 객체와 그 필드는 바뀔 수 없습니다. const 객체와 그 필드는 불변입니다. 
+final 객체는 수정될 수 없지만, final 객체의 필드는 바뀔 수 있습니다. 비교하자면 const 객체와 그 필드는 바뀔 수 없습니다.
+const 객체와 그 필드는 불변입니다. 
 ```
 
 const를 사용하여 상수 값을 만드는 방법에 대한 자세한 내용은 Lists, Maps 및 클래스를 참조하세요.
