@@ -23,7 +23,7 @@ Iterbale은 모든 종류의 Dart 애플리케이션을 위한 기본적인 구�
 이 코드랩을 완료하는 데 예상되는 시간 : 60분.
 
 ```
-주의
+노트
 
 이 페이지는 내장된 DartPad를 사용하여 예제와 연습을 표시합니다.
 
@@ -104,7 +104,8 @@ void main() {
 ```
 자세히
 
-for-in 반복문은 뒤에서 iterator을 사용합니다. 그러나 Iterator API가 직접 사용되는 것은 거의 볼 수 없습니다. for-in은 읽고 이해하기가 쉬우며 오류가 발생할 가능성이 적기 때문입니다.
+for-in 반복문은 내부적으로 iterator을 사용합니다. 그러나 Iterator API가 직접 사용되는 것은 거의 볼 수 없습니다.
+for-in은 읽고 이해하기가 쉬우며 오류가 발생할 가능성이 적기 때문입니다.
 ```
 
 ```
@@ -182,3 +183,319 @@ void main() {
   print(foundItem4);
 }
 ```
+
+이 예시에서, predicate를 작성하는 세 가지 다른 방법을 볼 수 있습니다.
+
+- 표현식: 테스트 코드에는 화살표 구문을 사용하는 한 줄이 있습니다.
+
+- 블록: 테스트 코드에는 대괄호와 반환문 사이에 여러 줄이 있습니다.
+
+- 함수: 테스트 코드는 firstWhere() 메서드를 매개변수로 전달하는 외부 함수에 있습니다.
+
+옳고 그른 방법은 없습니다. 가장 적합한 방식과 코드를 더 읽고 이해하기 쉬운 방법을 사용하세요.
+
+마지막 예시에서는 요소를 찾을 수 없을 때 대안을 제시하는 선택적 명명된 매개변수 onElse를 사용하여 firestWhere()를 호출합니다. 이 경우에는, 'None!'이라는 텍스트를 반환합니다. 제공된 조건을 만족하는 요소가 없기 때문입니다.
+
+```
+노트
+
+테스트 predicate를 만족하는 요소가 없고 onElse 매개변수가 제공되지 않으면, firstWhere() 메서드는 StateError가 발생합니다.
+```
+
+```
+빠른 리뷰
+
+Iterable의 요소는 반드시 순차적으로 접근해야합니다.
+
+모든 요소를 순회하는 가장 쉬운 방법은 for-in 반복문을 사용하는 것입니다.
+
+처음과 마지막 요소를 얻기 위해 first, last getter를 사용할 수 있습니다.
+
+firstWhere()를 사용하여 조건을 만족하는 첫 번째 요소를 찾을 수 있습니다.
+
+표현식, 블록, 함수로 테스트 predicate를 작성할 수 있습니다.
+
+핵심 용어:
+
+predicate: 특정한 조건을 만족하면 true를 반환하는 함수입니다.
+```
+
+## 연습: 테스트 predicate를 작성하는 연습 Exercise: Practice writing a test predicate
+
+다음 연습은 부분적으로 완료된 코드 스니펫을 포함하는 실패한 단위 테스트입니다. 테스트를 통과하도록 코드를 작성하여 연습을 완료하십시오. main()을 구현할 필요는 없습니다.
+
+이 연습은 sigleWhere()을 소개합니다. 이 메서드는 firstWhere()와 비슷하게 작동하지만 이 경우 predicate를 만족하려면 Iterable의 단 하나의 요소만 필요합니다. Iterable의 요소가 두 개 이상이거나 predicate를 만족하지 않는 경우에는 StateError 예외가 발생합니다.
+
+```
+경고
+singleWhere()는 마지막 요소까지 전체 Iterable을 순회합니다. 이는 Iterable이 무한하거나 대규모 요소 컬렉션을 포함하는 경우 문제가 발생할 수 있습니다.
+
+목표는 다음 조건을 만족하는 singleWhere()에 대한 predicate를 구현하는 것입니다.
+```
+
+- 문자 'a'를 포함하는 요소.
+
+- 문자 'M'으로 시작하는 요소.
+
+테스트 데이터의 모든 요소는 string입니다; 도움이 필요하면 class 문서를 확인해 보세요.
+
+## 조건 확인 Checking conditions
+
+Iterable을 사용하여 작업할 때 컬렉션의 모든 요소가 특정 조건을 충족하는지 확인해야 하는 경우가 있습니다.
+
+다음과 같은 for-in 반복문을 사용하여 솔루션을 작성하고 싶을 수도 있습니다.
+
+```dart
+for (final item in items) {
+  if (item.length < 5) {
+    return false;
+  }
+}
+return true;
+```
+
+그러나 every() 메서드를 사용하여 동일한 작업을 수행할 수 있습니다.
+
+```dart
+return items.every((item) => item.length >= 5);
+```
+
+every() 메서드를 사용하면 더 읽기 쉽고 간결하며 오류가 발생할 가능성이 적은 코드를 작성할 수 있습니다.
+
+## 예시: any()와 every() 사용 Example: Using any() and every()
+
+Iterable 클래스는 조건을 확인하는 데 사용할 수 있는 두 가지 메서드를 제공합니다.
+
+- any(): 하나 이상의 요소가 조건을 만족하면 true를 반환합니다.
+
+- every(): 모든 요소가 조건을 만족하면 true를 반환합니다.
+
+이 연습을 실행하여 작동하는 모습을 확인하세요.
+
+```dart
+void main() {
+  const items = ['Salad', 'Popcorn', 'Toast'];
+
+  if (items.any((item) => item.contains('a'))) {
+    print('At least one item contains "a"');
+  }
+
+  if (items.every((item) => item.length >= 5)) {
+    print('All items have length >= 5');
+  }
+}
+```
+
+예시에서 any()는 최소한 하나의 요소에 문자 a가 포함되어 있는지 확인하고, every()는 모든 요소의 길이가 5보다 크거나 같은지 확인합니다.
+
+코드를 실행한 후 false를 반환하도록 any()의 predicate를 변경해 보세요.
+
+```dart
+if (items.any((item) => item.contains('Z'))) {
+  print('At least one item contains "Z"');
+} else {
+  print('No item contains "Z"');
+}
+```
+
+또한 any()를 사용하여 Iterable의 어떤 요소도 특정 조건을 만족하지 않는지 확인할 수 있습니다.
+
+## 연습: Iterable이 조건을 만족하는지 확인 Exercise: Verify that an Iterable satisfies a condition
+
+다음 연습에서는 이전 예시에서 설명한 any() 및 every() 메서드를 사용하는 연습을 제공합니다. 이 경우, 회원 필드 age가 있는 사용자 객체로 표시되는 사용자 그룹으로 작업합니다.
+
+any()와 every()를 사용하여 두 함수를 구현합니다:
+
+- 파트 1: anyUserUnder18() 구현.
+  - 적어도 한 사용자가 17세 이하이면 true를 반환.
+
+- 파트 2: everyUserOver13() 구현.
+  - 모든 유저가 13세 이상이면 true를 반환.
+
+```
+빠른 리뷰
+
+for-in 반복문을 사용하여 조건을 확인할 수 있지만 더 나은 방법이 있습니다.
+
+any() 메서드를 사용하면 요소가 조건을 만족하는지 확인할 수 있습니다.
+
+every() 메서드를 사용하면 모든 요소가 조건을 만족하는지 확인할 수 있습니다.
+```
+
+## 필터링 Filtering
+
+이전 섹션에서는 특정 조건을 만족하는 요소를 찾는 데 도움이 될 수 있는 firstWhere() 또는 singleWhere()와 같은 메서드를 다루었습니다.
+
+하지만 특정 조건을 만족하는 모든 요소를 ​​찾고 싶다면 어떻게 해야 할까요? where() 메서드를 사용하여 이를 수행할 수 있습니다.
+
+```dart
+var evenNumbers = numbers.where((number) => number.isEven);
+```
+
+이 예시에서 numbers에는 여러 int 값이 있는 Iterable이 포함되어 있으며 where()는 짝수인 모든 숫자를 찾습니다.
+
+where()의 출력은 또 다른 Iterable이므로 이를 반복하거나 다른 Iterable 메서드를 적용하는 데 사용할 수 있습니다. 다음 예시에서는 where()의 출력이 for-in 반복문 내에서 직접 사용됩니다.
+
+```dart
+var evenNumbers = numbers.where((number) => number.isEven);
+
+for (final number in evenNumbers) {
+  print('$number is even');
+}
+```
+
+## 예시: where() 사용 Example: Using where()
+
+다음 예시를 실행하여 where()를 any()와 같은 다른 메서드와 함께 사용하는 방법을 확인하세요.
+
+```dart
+void main() {
+  var evenNumbers = const [1, -2, 3, 42].where((number) => number.isEven);
+
+  for (final number in evenNumbers) {
+    print('$number is even.');
+  }
+
+  if (evenNumbers.any((number) => number.isNegative)) {
+    print('evenNumbers contains negative numbers.');
+  }
+
+  // predicate를 만족하는 요소가 없으면 출력은 비어 있습니다.
+  var largeNumbers = evenNumbers.where((number) => number > 1000);
+
+  if (largeNumbers.isEmpty) {
+    print('largeNumbers is empty!');
+  }
+}
+```
+
+이 예시에서는, where()를 사용하여 짝수인 모든 숫자를 찾은 다음 any()를 사용하여 결과에 음수가 포함되어 있는지 확인합니다.
+
+예시 뒷부분에서, 1000보다 큰 모든 숫자를 찾기 위해 where()를 다시 사용합니다. 숫자가 없기 때문에 결과는 빈 Iterable입니다.
+
+```
+노트
+
+where()의 predicate를 만족하는 요소가 없으면 메서드는 빈 Iterable을 반환합니다. singleWhere()나 firstWhere()와 달리 where()는 StateError 예외를 발생시키지 않습니다.
+```
+
+## 예시: takeWhile 사용 Example: Using takeWhile
+
+takeWhile()과 skipWhile() 메서드는 Iterable에서 요소를 필터링하는 데도 도움이 될 수 있습니다.
+
+아래 예시를 실행하여 어떻게 takeWhile()과 skipWhile()이 숫자가 포함된 Iterable을 분할하는지 확인하세요.
+
+```dart
+void main() {
+  const numbers = [1, 3, -2, 0, 4, 5];
+
+  var numbersUntilZero = numbers.takeWhile((number) => number != 0);
+  print('Numbers until 0: $numbersUntilZero');
+
+  var numbersStartingAtZero = numbers.skipWhile((number) => number != 0);
+  print('Numbers starting at 0: $numbersStartingAtZero');
+}
+```
+
+이 예시에서 takeWhile()은 predicate를 만족하는 요소 이전의 모든 요소를 ​​포함하는 Iterable을 반환합니다. 반면에, skipWhile()은 predicate를 만족하지 않는 첫 번째 요소를 포함하여 이후의 모든 요소를 ​​포함하는 Iterable을 반환합니다.
+
+예시를 실행한 후 takeWhile()을 변경하여 첫 번째 음수에 도달할 때까지 요소를 가져옵니다.
+
+```dart
+var numbersUntilNegative = numbers.takeWhile((number) => !number.isNegative);
+```
+
+조건 number.isNegative가 !로 부정되는 것에 유의하세요.
+
+## 연습: 리스트의 요소를 필터링 Exercise: Filtering elements from a list
+
+다음 연습에서는 이전 연습의 User 클래스와 함께 where() 메서드를 사용하는 연습을 제공합니다.
+
+where()를 사용하여 다음 두 함수를 구현하세요.
+
+- 파트 1: filterOutUnder21()를 구현.
+  - 21세 이상인 모든 사용자를 포함하는 Iterable을 반환.
+
+- 파트 2: findShortNamed()를 구현.
+  - 이름의 길이가 3 이하인 모든 사용자를 포함하는 Iterable을 반환.
+
+```
+빠른 리뷰
+
+where()를 사용하여 Iterable의 요소를 필터링합니다.
+
+where()의 출력은 또 다른 Iterable입니다.
+
+조건을 만족할 때까지, 혹은 만족된 후의 요소를 얻으려면 takeWhile()과 skipWhile()을 사용하세요.
+```
+
+## 매핑 Mapping
+
+map() 메서드를 사용하여 Iterable을 매핑하면 각요소에 함수를 적용하여 각 요소를 새 요소로 바꿀 수 있습니다.
+
+```dart
+Iterable<int> output = numbers.map((number) => number * 10);
+```
+
+이 예시에서는 Iterable numbers의 각 요소에 10을 곱합니다.
+
+또한 map()을 사용하여 요소를 다른 객체로 변환할 수 있습니다. 예를 들어, 다음 예제에서 볼 수 있듯이 모든 int를 String으로 변환할 수 있습니다.
+
+```dart
+Iterable<String> output = numbers.map((number) => number.toString());
+```
+
+```
+노트
+
+map()은 지연된 Iterable을 반환합니다. 즉, 제공된 함수는 오직 요소가 반복될 때만 호출됩니다.
+```
+
+## 예시: map()을 사용하여 요소를 변경
+
+아래의 예시를 실행하여 map()을 사용해 Iterable의 모든 요소에 2를 곱하는 방법을 확인하세요. 출력이 어떻게 될 것이라 생각하시나요?
+
+```dart
+void main() {
+  var numbersByTwo = const [1, -2, 3, 42].map((number) => number * 2);
+  print('Numbers: $numbersByTwo');
+}
+```
+
+## 연습: 다른 타입으로 매핑 Exercise: Mapping to a different type
+
+이전 예시에서, Iterable의 요소에 2를 곱했습니다. 그 연산의 입력과 출력은 둘 다 int의 Iterable이었습니다.
+
+아래의 연습에서, 코드는 User의 Iterable을 사용하여 각 사용자의 이름과 나이를 포함하는 문자열이 포함된 Iterable을 반환해야합니다.
+
+Iterable의 각 문자열은 반드시 다음 형식과 같아야 합니다. '{name} is {age}' - 예를 들면 'Alice is 21'.
+
+```
+빠른 리뷰
+
+map()은 Iterable의 모든 요소에 함수를 적용합니다.
+
+map()의 출력은 또 다른 Iterable입니다.
+
+함수는 Iterable이 반복될 때까지 평가되지 않습니다.
+```
+
+## 연습: 모든 것을 하나로 합치기 Exercise: Putting it all together
+
+이제 마지막 연습으로 배운 것들을 연습해볼 시간입니다.
+
+이 연습에서는 문자열을 사용하는 생성자가 있는 EailAddress 클래스를 제공합니다. 또 다른 제공되는 함수는 이메일 주소가 유효한지 확인하는 isEmailAddress()입니다.
+
+| 생성자/함수 | 타입 시그니처 | 설명 |
+| EmailAddress() | EmailAddress(String address) | 지정된 주소에 대한 EmailAddress를 생성합니다. |
+| isValidEmailAddress() | bool isValidEmailAddress(EmailAddress) | 만약 제공된 EmailAddress가 유효하면 true를 반환합니다.  |
+
+다음 코드를 작성하세요:
+
+파트 1: parseEmailAddresses()을 구현.
+  - 이메일 주소를 포함한 Iterable<String>을 가지고, Iterable<EmailAddress>를 반환하는 parseEmailAddress() 함수를 작성하세요.
+  - String을 EmailAddress로 매핑하려면 map() 메서드를 사용하세요.
+  - EmailAddress(String) 생성자를 사용하여 EmailAddress 객체를 생성하세요.
+
+파트 2: anyInvalidEmailAddress()를 구현.
+  - 
