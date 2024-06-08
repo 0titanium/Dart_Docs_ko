@@ -487,15 +487,30 @@ map()의 출력은 또 다른 Iterable입니다.
 이 연습에서는 문자열을 사용하는 생성자가 있는 EailAddress 클래스를 제공합니다. 또 다른 제공되는 함수는 이메일 주소가 유효한지 확인하는 isEmailAddress()입니다.
 
 | 생성자/함수 | 타입 시그니처 | 설명 |
+|---|---|---|
 | EmailAddress() | EmailAddress(String address) | 지정된 주소에 대한 EmailAddress를 생성합니다. |
 | isValidEmailAddress() | bool isValidEmailAddress(EmailAddress) | 만약 제공된 EmailAddress가 유효하면 true를 반환합니다.  |
 
 다음 코드를 작성하세요:
 
 파트 1: parseEmailAddresses()을 구현.
-  - 이메일 주소를 포함한 Iterable<String>을 가지고, Iterable<EmailAddress>를 반환하는 parseEmailAddress() 함수를 작성하세요.
+  - 이메일 주소를 포함한 Iterable<String>을 받아서 Iterable<EmailAddress>를 반환하는 parseEmailAddress() 함수를 작성하세요.
   - String을 EmailAddress로 매핑하려면 map() 메서드를 사용하세요.
   - EmailAddress(String) 생성자를 사용하여 EmailAddress 객체를 생성하세요.
 
 파트 2: anyInvalidEmailAddress()를 구현.
-  - 
+  - Iterable<EmailAddress>를 받아서 Iterable 안의 EmailAddress가 유효하지 않으면 true를 반환하는 함수 anyInvalidEmailAddress()를 작성하세요.
+  - 제공된 함수 isValidEmailAddress()와 함께 any() 메서드를 사용하세요.
+
+파트 3: validEmailAddresses()를 구현.
+  - Iterable<EmailAddress>를 받아서 유효한 주소만 포함하는 다른 Iterable<EmailAddress>를 반환하는 함수 anyInvalidEmailAddress()를 작성하세요.
+  - Iterable<EmailAddress>를 필터링하려면 where() 메서드를 사용하세요.
+  - EmailAddress가 유효한지 평가하려면 제공된 함수 isValidEmailAddress()를 사용하세요.
+
+## 다음 단계 What's next
+
+축하합니다. 코드랩을 완료했습니다! 더 자세히 알아보고 싶은 경우, 다음 단계에 대한 몇 가지 제안을 참고하세요.
+
+  - DartPad로 학습하기.
+  - 다른 코드랩을 시도하기.
+  - 이 코드랩에서 다루지 않은 메서드들에 대해 알아보고 싶다면 Iterable API 레퍼런스를 읽어보세요.
