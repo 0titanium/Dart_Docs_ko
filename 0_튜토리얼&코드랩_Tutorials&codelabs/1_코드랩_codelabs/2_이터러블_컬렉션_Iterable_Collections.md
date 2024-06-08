@@ -34,7 +34,7 @@ DartPad 대신 빈 상자가 표시되면 DartPad 문제 해결 페이지로 이
 
 도움이 필요하면 힌트나 솔루션 드롭다운을 확장하세요.
 
-## 컬렉션이란 무엇인가? What are collections?
+## 컬렉션이란? What are collections?
 
 컬렉션이란 요소라고 불리는 객체 그룹을 나타내는 객체입니다. Iterable은 일종의 컬렉션입니다.
 
@@ -46,7 +46,7 @@ DartPad 대신 빈 상자가 표시되면 DartPad 문제 해결 페이지로 이
 
 - Map: 키를 사용하여 요소를 읽는 데 사용됩니다.
 
-## Iterable이란 무엇입니까? What is an Iterable?
+## Iterable이란? What is an Iterable?
 
 Iterable은 순차적으로 접근할 수 있는 요소의 컬렉션입니다.
 
