@@ -139,11 +139,11 @@ void main() {
 
 이 예시에서는 first와 last를 사용하여 Iterable의 첫 번째 요소와 마지막 요소를 가져오는 방법을 살펴보았습니다. 또한 조건을 만족하는 첫 번째 요소를 찾는 것도 가능합니다. 다음 섹션에서는 firstWhere() 메서드를 사용하여 이를 수행하는 방법을 보여줍니다.
 
-## 예시: firestWhere() 사용 Example: Using firstWhere()
+## 예시: firstWhere() 사용 Example: Using firstWhere()
 
 Iterable의 요소에 순차적으로 접근이 가능한 것과 첫 번째 또는 마지막 요소를 쉽게 얻을 수 있다는 것을 이미 살펴봤습니다.
 
-이제, 특정 조건을 만족하는 첫 번째 요소를 찾는 firestWhere()를 사용하는 방법에 대해 배웁니다. 이 메서드는 입력이 특정 조건을 만족하면 true를 반환하는 함수인 predicate를 전달해야합니다.
+이제, 특정 조건을 만족하는 첫 번째 요소를 찾는 firstWhere()를 사용하는 방법에 대해 배웁니다. 이 메서드는 입력이 특정 조건을 만족하면 true를 반환하는 함수인 predicate를 전달해야합니다.
 
 ```dart
 String element = iterable.firstWher((element) => element.length > 5);
@@ -194,7 +194,7 @@ void main() {
 
 옳고 그른 방법은 없습니다. 가장 적합한 방식과 코드를 더 읽고 이해하기 쉬운 방법을 사용하세요.
 
-마지막 예시에서는 요소를 찾을 수 없을 때 대안을 제시하는 선택적 명명된 매개변수 onElse를 사용하여 firestWhere()를 호출합니다. 이 경우에는, 'None!'이라는 텍스트를 반환합니다. 제공된 조건을 만족하는 요소가 없기 때문입니다.
+마지막 예시에서는 요소를 찾을 수 없을 때 대안을 제시하는 선택적 명명된 매개변수 onElse를 사용하여 firstWhere()를 호출합니다. 이 경우에는, 'None!'이라는 텍스트를 반환합니다. 제공된 조건을 만족하는 요소가 없기 때문입니다.
 
 ```
 노트
