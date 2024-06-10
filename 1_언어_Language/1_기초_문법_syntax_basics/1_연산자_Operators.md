@@ -331,3 +331,102 @@ String playerName(String? name) {
 ```
 
 ## 캐스케이드 표기법 Cascade notation
+
+캐스케이드 (.., ?..)는 같은 객체에 대한 연속적인 연산을 가능하게 합니다. 인스턴스 멤버에 접근하는 것에 더해서, 같은 객체에 대해 인스턴스 메서드를 호출하는 것 또한 가능합니다. 이것은 임시 변수 생성에 대한 수고를 줄이고 더 매끄러운 코드를 작성할 수 있게 합니다.
+
+다음과 같은 코드를 고려해보세요:
+
+```dart
+var paint = Paint()
+  ..color = Colors.black
+  ..strokeCap = StrokeCap.round
+  ..strokeWidth = 5.0;
+```
+
+생성자 Paint()는 Paint 객체를 반환합니다. 캐스케이드 표기법을 따르는 코드는 반환될 수 있는 모든 값을 무시하고 이 객체에 작동합니다.
+
+이전의 예시는 아래의 코드와 동일합니다.
+
+```dart
+var paint = Paint();
+
+paint.color = Colors.black;
+
+paint.strokeCap = StrokeCap.round;
+
+paint.strokeWidth = 5.0;
+```
+
+만약 캐스케이드가 적용된 객체가 null일 수 있는 경우, 첫 번째 연산에서 null 단축 캐스케이드 (?..) 를 사용하세요. ?..로 시작하면 null 객체에 대한 캐스케이드 연산이 적용되지 않음을 보장합니다.
+
+```dart
+querySelector('#confirm') // 객체를 가져옵니다.
+  ?..text = 'Confirm' // 이 멤버를 사용합니다.
+  ..classes.add('important')
+  ..onClick.listen((e) => window.alert('Confirmed!'))
+  ..scrollIntoView();
+```
+
+```
+버전 노트
+
+?.. 문법은 최소한 2.12 이상의 언어 버전을 요구합니다.
+```
+
+이전의 코드는 다음과 동일합니다.
+
+```dart
+var button = querySelector('#confirm');
+
+button?.text = 'Confirm';
+
+button?.classes.add('important');
+
+button?.onClick.listen((e) => window.alert('Confirmed!'));
+
+button?.scrollIntoView();
+```
+
+캐스케이드를 중첩할 수도 있습니다. 예를 들어:
+
+```dart
+final addressBook = (AddressBookBuilder()
+      ..name = 'jenny'
+      ..email = 'jenny@example.com'
+      ..phone = (PhoneNumberBuilder()
+            ..number = '415-555-0100'
+            ..label = 'home')
+          .build())
+    .build();
+```
+
+실제 객체를 반환하는 함수에서 캐스케이드를 구성할 때에는 주의하세요. 예를 들어, 다음 코드는 실패합니다:
+
+```dart
+var sb = StringBuffer();
+sb.write('foo')
+  ..write('bar'); // 오류: 메서드 'write'는 'void'에 대해 정의되지 않았습니다.
+```
+
+sb.write() 호출은 void를 반환하고, void에 대한 캐스케이드를 구성할 수 없습니다.
+
+```
+노트
+
+엄격하게 말해서, 캐스케이드에 대한 "두 개의 점" 표기법은 연산자가 아닙니다. 이것은 단지 Dart 문법의 일부입니다.
+```
+
+## 스프레드 연산자 Spread operators
+
+스프레드 연산자는 컬렉션을 생성하는 표현식을 평가하고, 결과 값의 압축을 풀고, 그것을 또 다른 컬렉션에 삽입합니다.
+
+스프레드 연산자는 실제로는 연산자 표현식이 아닙니다. .../...? 문법은 컬렉션 리터럴 그 자체의 일부입니다. 그래서, Colletions 페이지의 스프레드 연산자에 대해 더 알아볼 수 있습니다.
+
+이것은 연산자가 아니기 때문에 어떠한 연산자 우선순위도 갖지 않습니다. 사실상, 가장 낮은 우선순위를 가집니다. 다음과 같은 모든 종류의 표현식이 스프레드 대상으로 유효합니다.
+
+```dart
+[...a + b]
+```
+
+## 다른 연산자들 Other operators
+
