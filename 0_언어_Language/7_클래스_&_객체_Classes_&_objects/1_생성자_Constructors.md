@@ -378,7 +378,7 @@ Constructors work in a somewhat similar way to how you call a chain of static me
 
 생성자는 dusthrehls static 메서드 호출하는 방법과 다소 유사한 방식으로 작동합니다. 하위 클래스가 상위 클래스의 static 메서드를 호출할 수 있는 것처럼 각 하위 클래스는 상위 클래스의 생성자를 호출하여 인스턴스를 초기화할 수 있습니다. 이 과정은 생성자 내부나 시그니처를 "상속"하지 않습니다.
 
-## 기본이 아닌 슈퍼클래스 생성자
+## 기본이 아닌 상위 클래스 생성자
 
 Dart는 다음 순서로 생성자를 실행합니다.
 

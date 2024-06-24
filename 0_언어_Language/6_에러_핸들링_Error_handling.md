@@ -1,4 +1,4 @@
-# 오류 핸들링 Error handling
+# 에러 핸들링 Error handling
 
 ## 예외 Exceptions
 
