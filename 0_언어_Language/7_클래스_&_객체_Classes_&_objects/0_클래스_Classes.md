@@ -96,7 +96,9 @@ print('The type of a is ${a.runtimeType}');
 
 ```
 경고
-객체의 타입을 테스트하려면 RuntimeType 대신 타입 테스트 연산자를 사용하세요. 프로덕션 환경에서 테스트 Object is Type은 Object.RuntimeType == Type보다 더 안정적입니다.
+객체의 타입을 테스트하려면 RuntimeType 대신 타입 테스트 연산자를 사용하세요.
+
+프로덕션 환경에서 테스트 Object is Type은 Object.RuntimeType == Type보다 더 안정적입니다.
 ```
 
 지금까지 클래스를 사용하는 방법을 살펴보았습니다. 이 섹션의 나머지 부분에서는 클래스를 구현하는 방법을 보여줍니다.
@@ -171,7 +173,6 @@ class ProfileMark {
 
 모든 클래스는 클래스와 클래스가 구현하는 모든 인터페이스의 모든 인스턴스 멤버를 포함하는 인터페이스를 암시적으로 정의합니다. B의 구현을 상속하지 않고 B 클래스의 API를 지원하는 A 클래스를 생성하려면 A 클래스가 B 인터페이스를 구현해야 합니다.
 
-A class implements one or more interfaces by declaring them in an implements clause and then providing the APIs required by the interfaces. For example:
 클래스는 implements 절에 인터페이스를 선언한 다음, 인터페이스가 요구하는 API를 제공함으로써 하나 이상의 인터페이스를 구현합니다. 예를 들어:
 
 ```dart
