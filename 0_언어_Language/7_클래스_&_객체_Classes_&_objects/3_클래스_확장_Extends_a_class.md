@@ -1,7 +1,5 @@
 # 클래스 확장 Extends a class
 
-Use extends to create a subclass, and super to refer to the superclass:
-
 extneds는 하위 클래스를 만드는 데, super는 상위 클래스를 참조하는 데 사용하세요.
 
 ```dart
@@ -27,8 +25,6 @@ class SmartTelevision extends Television {
 extends의 다른 사용법에 대해서는 제네릭 페이지의 매개변수화된 타입에 대한 토론을 참조하세요.
 
 ## 멤버 재정의 Overriding members
-
-Subclasses can override instance methods (including operators), getters, and setters. You can use the @override annotation to indicate that you are intentionally overriding a member:
 
 하위 클래스는 인스턴스 메서드(연산자 포함), getter 및 setter를 재정의할 수 있습니다. @override 주석을 사용하여 의도적으로 멤버를 재정의하고 있음을 나타낼 수 있습니다.
 
@@ -60,10 +56,8 @@ class SmartTelevision extends Television {
 ```
 경고
 
-If you override ==, you should also override Object's hashCode getter. For an example of overriding == and hashCode, check out Implementing map keys.
-```
-
 == 을 재정의하는 경우 객체의 hashCode getter도 재정의해야 합니다. == 및 hashCoded 재정의에 대한 예시 맵 키 구현에서 확인하세요.
+```
 
 ## noSuchMethod()
 

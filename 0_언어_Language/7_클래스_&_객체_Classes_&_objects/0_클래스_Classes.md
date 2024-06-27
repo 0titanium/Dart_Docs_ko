@@ -211,7 +211,6 @@ class Point implements Comparable, Location {...}
 
 ## 클래스 변수와 메서드 Class variables and methods
 
-Use the static keyword to implement class-wide variables and methods.
 클래스 전체의 변수와 메소드를 구현하려면 static 키워드를 사용하십시오.
 
 ## static 변수 Static variables

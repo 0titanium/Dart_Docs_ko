@@ -374,8 +374,6 @@ void main() {
 
 클래스는 상위 클래스의 매개변수를 상속받을 수 있습니다. 이것을 상위 매개변수라고 합니다.
 
-Constructors work in a somewhat similar way to how you call a chain of static methods. Each subclass can call its superclass's constructor to initialize an instance, like a subclass can call a superclass's static method. This process doesn't "inherit" constructor bodies or signatures.
-
 생성자는 dusthrehls static 메서드 호출하는 방법과 다소 유사한 방식으로 작동합니다. 하위 클래스가 상위 클래스의 static 메서드를 호출할 수 있는 것처럼 각 하위 클래스는 상위 클래스의 생성자를 호출하여 인스턴스를 초기화할 수 있습니다. 이 과정은 생성자 내부나 시그니처를 "상속"하지 않습니다.
 
 ## 기본이 아닌 상위 클래스 생성자
@@ -436,8 +434,6 @@ class Employee extends Person {
 
 ## 상위 매개변수 Super parameters
 
-To avoid passing each parameter into the super invocation of a constructor, use super-initializer parameters to forward parameters to the specified or default superclass constructor. You can't use this feature with redirecting constructors. Super-initializer parameters have syntax and semantics like initializing formal parameters.
-
 각 매개변수를 생성자의 상위 호출에 전달하지 않으려면, 상위 초기화 매개변수를 사용하여 매개변수를 지정된 상위 클래스 생성자 또는 기본 상위 클래스 생성자에 전달하세요. 생성자 리디렉션과 함께 이 기능을 사용할 수 없습니다 . 상위 초기화 매개변수는 형식 매개변수 초기화와 같은 구문과 의미를 가집니다.
 
 ```
@@ -474,8 +470,6 @@ class Vector3d extends Vector2d {
 ```
 
 이 명명된 생성자는 x값을 두 번 설정하려고 시도합니다. 한 번은 상위 생성자에서, 한 번은 위치 상위 매개변수로 설정합니다. 둘 다 위치 매개변수 x를 다루므로 오류가 발생합니다.
-
-When the super constructor has named arguments, you can split them between named super parameters (super.y in the next example) and named arguments to the super constructor invocation (super.named(x: 0)).
 
 상위 생성자에 명명된 인자가 있는 경우, 명명된 상위 매개변수(다음 예시의 super.y)와 상위 생성자 호출(super.named(x: 0))에 대한 명명된 인자 간에 이를 분할할 수 있습니다.
 
