@@ -214,7 +214,7 @@ class MockVehicle implements Vehicle {
 
 알려진 열거형 하위 타입 세트를 만들려면 sealed 수정자를 사용하십시오. 이를 통해 정적으로 철저히 보장되는 하위 타입에 대한 switch를 만들 수 있습니다.
 
-sealed 수정자는 자체 라이브러리 외부에서 확정되거나 구현되는 클래스를 방지합니다. sealed 클래스는 암묵적으로 abstract입니다.
+sealed 수정자는 자체 라이브러리 외부에서 확장되거나 구현되는 클래스를 방지합니다. sealed 클래스는 암묵적으로 abstract입니다.
 
 - sealed 클래스는 자체적으로 생성할 수 없습니다.
 
