@@ -225,7 +225,7 @@ return Consumer<CartModel>(
 );
 ```
 
-액세스하려는 모델의 타입을 지정해야 합니다. 이 경우 CartModel이 필요하므로 Consumer<CartModel>을 작성합니다. 제네릭(<CartModel>)을 지정하지 않으면 provider 패키지가 도움을 줄 수 없습니다. provider는 타입을 기반으로 하며 타입이 없으면 사용자가 원하는 것이 무엇인지 알 수 없습니다.
+액세스하려는 모델의 타입을 지정해야 합니다. 이 경우 CartModel이 필요하므로 Consumer\<CartModel>을 작성합니다. 제네릭(\<CartModel>)을 지정하지 않으면 provider 패키지가 도움을 줄 수 없습니다. provider는 타입을 기반으로 하며 타입이 없으면 사용자가 원하는 것이 무엇인지 알 수 없습니다.
 
 Consumer 위젯의 유일한 필수 인자는 builder입니다. builder는 ChangeNotifier가 변경될 때마다 호출되는 함수입니다. (즉, 모델에서 notifyListeners()를 호출하면 해당하는 모든 Consumer 위젯의 모든 builder 메서드가 호출됩니다.)
 
@@ -287,7 +287,7 @@ return HumongousWidget(
 
 때로는 UI를 변경하기 위해 모델의 데이터가 실제로 필요하지 않지만 여전히 액세스해야 하는 경우가 있습니다. 예를 들어, ClearCart 버튼은 사용자가 카트에서 모든 것을 제거할 수 있도록 하려고 합니다. 장바구니의 내용을 표시할 필요는 없으며 단지 clear() 메서드를 호출하기만 하면 됩니다.
 
-이를 위해 Consumer<CartModel>을 사용할 수 있지만 이는 낭비입니다. 우리는 다시 빌드할 필요가 없는 위젯을 다시 빌드하도록 프레임워크에 요청합니다.
+이를 위해 Consumer\<CartModel>을 사용할 수 있지만 이는 낭비입니다. 우리는 다시 빌드할 필요가 없는 위젯을 다시 빌드하도록 프레임워크에 요청합니다.
 
 이 사례에서는 listen 매개변수를 false로 설정한 상태에서 Provider.of를 사용할 수 있습니다.
 
