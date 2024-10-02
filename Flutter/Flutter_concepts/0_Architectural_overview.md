@@ -344,3 +344,175 @@ Widget build(BuildContext context) {
 모든 RenderObject의 루트는 RenderView로, 이는 렌더 트리의 전체 출력을 나타냅니다. 플랫폼이 새 프레임을 렌더링해야 할 때(예: vsync 또는 텍스처 압축/업로드가 완료되었을 때), 렌더 트리의 루트에 있는 RenderView 객체의 일부인 compositeFrame() 메서드가 호출됩니다. 이는 장면 업데이트를 트리거하는 SceneBuilder를 생성합니다. 장면이 완료되면 RenderView 객체는 합성된 장면을 dart:ui의 Window.render() 메서드에 전달하고, 이 메서드는 GPU에 제어를 넘겨 렌더링을 수행합니다.
 
 파이프라인의 구성 및 래스터화 단계에 대한 자세한 내용은 이 고수준 문서의 범위를 벗어나지만, Flutter 렌더링 파이프라인에 대한 자세한 정보는 관련 강연에서 확인할 수 있습니다.
+
+## 플랫폼 임베딩 Platform embedding
+
+봤듯이, Flutter 사용자 인터페이스는 해당 OS의 위젯으로 변환되는 대신 Flutter 자체에 의해 구축되고, 레이아웃이 설정되며, 합성되고, 그려집니다. 각 운영 체제의 텍스처를 얻고 앱 생명 주기에 참여하는 메커니즘은 해당 플랫폼의 고유한 요구 사항에 따라 다를 수밖에 없습니다. Flutter 엔진은 플랫폼에 종속되지 않으며, 안정적인 ABI(응용 프로그램 이진 인터페이스)를 제공하여 플랫폼 임베더가 Flutter를 설정하고 사용할 수 있게 합니다.
+
+플랫폼 임베더는 모든 Flutter 콘텐츠를 호스팅하는 네이티브 OS 애플리케이션으로, 호스트 운영 체제와 Flutter 사이에서 접착제 역할을 합니다. Flutter 앱을 시작할 때 임베더는 진입점을 제공하고, Flutter 엔진을 초기화하며, UI와 래스터 작업을 위한 스레드를 확보하고, Flutter가 쓸 수 있는 텍스처를 만듭니다. 또한 임베더는 마우스, 키보드, 터치 같은 입력 제스처, 창 크기 조정, 스레드 관리, 플랫폼 메시지 등의 앱 생명 주기를 관리합니다. Flutter는 Android, iOS, Windows, macOS, Linux용 플랫폼 임베더를 포함하며, VNC 스타일의 프레임버퍼를 통해 Flutter 세션을 원격으로 지원하는 예시나 Raspberry Pi용 예시처럼 사용자 정의 플랫폼 임베더를 만들 수도 있습니다.
+
+각 플랫폼은 고유한 API와 제약 조건을 가지고 있습니다. 다음은 간단한 플랫폼별 참고 사항입니다:
+
+- iOS와 macOS에서 Flutter는 각각 UIViewController 또는 NSViewController로 임베더에 로드됩니다. 플랫폼 임베더는 FlutterEngine을 생성하며, 이는 Dart VM과 Flutter 런타임을 호스팅하는 역할을 합니다. 또한 FlutterViewController는 FlutterEngine에 연결되어 UIKit이나 Cocoa의 입력 이벤트를 Flutter로 전달하고, FlutterEngine이 Metal 또는 OpenGL을 사용해 렌더링한 프레임을 표시합니다.
+
+- Android에서는 Flutter가 기본적으로 Activity로 임베더에 로드됩니다. FlutterView가 뷰를 제어하며, Flutter 콘텐츠는 구성 및 Z-순서 요구 사항에 따라 뷰 또는 텍스처로 렌더링됩니다. FlutterView는 Flutter 콘텐츠를 표시하는 역할을 하며, 이를 통해 앱 화면에 Flutter UI가 표시됩니다.
+
+- Windows에서는 Flutter가 전통적인 Win32 애플리케이션으로 호스팅되며, 콘텐츠는 ANGLE(Almost Native Graphics Layer Engine)을 사용하여 렌더링됩니다. ANGLE은 OpenGL API 호출을 DirectX 11에 해당하는 호출로 변환하는 라이브러리로, Windows 환경에서 Flutter가 원활하게 그래픽을 처리할 수 있게 해줍니다.
+
+## 다른 코드와 통합 Integrating with other code
+
+Flutter는 다양한 상호 운용성 메커니즘을 제공합니다. Kotlin이나 Swift 같은 언어로 작성된 코드나 API에 접근하거나, 네이티브 C 기반 API를 호출하거나, Flutter 앱에 네이티브 컨트롤을 임베드하거나, 기존 애플리케이션에 Flutter를 임베드하는 경우에도 이러한 메커니즘을 사용할 수 있습니다.
+
+## 플랫폼 채널 Platform channel
+
+모바일 및 데스크톱 앱에서 Flutter는 플랫폼 채널을 통해 사용자 정의 코드를 호출할 수 있도록 합니다. 이는 Dart 코드와 호스트 앱의 플랫폼별 코드 간에 통신할 수 있는 메커니즘입니다. 공통 채널(이름과 코덱을 캡슐화)을 생성하면, Dart와 Kotlin이나 Swift 같은 언어로 작성된 플랫폼 구성 요소 간에 메시지를 주고받을 수 있습니다. 데이터는 Dart의 Map 같은 타입에서 표준 형식으로 직렬화된 후, Kotlin의 HashMap 또는 Swift의 Dictionary와 같은 동등한 표현으로 역직렬화됩니다.
+
+다음은 Dart에서 Kotlin(안드로이드) 또는 Swift(iOS)에서 이벤트 핸들러를 호출하는 플랫폼 채널의 짧은 예시입니다:
+
+```dart
+// Dart side
+const channel = MethodChannel('foo');
+final greeting = await channel.invokeMethod('bar', 'world') as String;
+print(greeting);
+```
+
+```java
+// Android (Kotlin)
+val channel = MethodChannel(flutterView, "foo")
+channel.setMethodCallHandler { call, result ->
+  when (call.method) {
+    "bar" -> result.success("Hello, ${call.arguments}")
+    else -> result.notImplemented()
+  }
+}
+```
+
+```swift
+// iOS (Swift)
+let channel = FlutterMethodChannel(name: "foo", binaryMessenger: flutterView)
+channel.setMethodCallHandler {
+  (call: FlutterMethodCall, result: FlutterResult) -> Void in
+  switch (call.method) {
+    case "bar": result("Hello, \(call.arguments as! String)")
+    default: result(FlutterMethodNotImplemented)
+  }
+}
+```
+
+플랫폼 채널을 사용하는 추가 예제는 flutter/packages 리포지토리에서 찾을 수 있습니다. 또한 Firebase, 광고, 카메라 및 블루투스와 같은 장치 하드웨어와 같은 다양한 일반 시나리오를 다루는 수천 개의 Flutter 플러그인이 이미 제공되고 있습니다. 이러한 플러그인을 사용하면 다양한 기능을 손쉽게 구현할 수 있으며, 많은 커뮤니티 지원과 문서도 함께 제공됩니다.
+
+## 외부 함수 인터페이스 Foreign Function Interface
+
+C 기반 API, 현대 언어로 작성된 코드(예: Rust나 Go)에서 생성된 API를 포함하여, Dart는 dart:ffi 라이브러리를 사용하여 네이티브 코드에 바인딩하는 직접적인 메커니즘을 제공합니다. 외부 함수 인터페이스(FFI) 모델은 데이터 전달을 위해 직렬화가 필요하지 않기 때문에 플랫폼 채널보다 상당히 빠를 수 있습니다. 대신 Dart 런타임은 Dart 객체에 의해 지원되는 힙 메모리를 할당하고 정적으로 또는 동적으로 링크된 라이브러리에 대한 호출을 수행할 수 있는 기능을 제공합니다. FFI는 웹을 제외한 모든 플랫폼에서 사용할 수 있으며, 웹에서는 JS 상호 운용성 라이브러리와 package:web가 유사한 목적을 수행합니다.
+
+FFI를 사용하려면 Dart와 비관리 메서드 서명 각각에 대한 typedef를 생성하고 Dart VM에 이들 간의 매핑을 지시해야 합니다. 다음은 전통적인 Win32 MessageBox() API를 호출하는 코드 조각의 예입니다:
+
+```dart
+import 'dart:ffi';
+import 'package:ffi/ffi.dart'; // .toNativeUtf16() 확장 메서드를 포함합니다.
+
+typedef MessageBoxNative = Int32 Function(
+  IntPtr hWnd,
+  Pointer<Utf16> lpText,
+  Pointer<Utf16> lpCaption,
+  Int32 uType,
+);
+
+typedef MessageBoxDart = int Function(
+  int hWnd,
+  Pointer<Utf16> lpText,
+  Pointer<Utf16> lpCaption,
+  int uType,
+);
+
+void exampleFfi() {
+  final user32 = DynamicLibrary.open('user32.dll');
+  final messageBox =
+      user32.lookupFunction<MessageBoxNative, MessageBoxDart>('MessageBoxW');
+
+  final result = messageBox(
+    0, // 소유자 창 없음
+    'Test message'.toNativeUtf16(), // 메시지
+    'Window caption'.toNativeUtf16(), // 윈도우 타이틀
+    0, // 확인 버튼만
+  );
+}
+```
+
+## 플러터 앱에서 네이티브 컨트롤 렌더링 Rendering native controls in a Flutter app
+
+Flutter 콘텐츠는 텍스처에 그려지고 위젯 트리가 완전히 내부적으로 관리되기 때문에, Flutter의 내부 모델이나 Flutter 위젯 내에서 렌더링된 Android 뷰와 같은 것이 존재할 자리가 없습니다. 이는 기존 플랫폼 구성 요소(예: 브라우저 컨트롤)를 Flutter 앱에 포함하고자 하는 개발자에게는 문제가 될 수 있습니다.
+
+Flutter는 이러한 문제를 해결하기 위해 플랫폼 뷰 위젯(AndroidView 및 UiKitView)을 도입하여 각 플랫폼에서 이러한 종류의 콘텐츠를 포함할 수 있게 합니다. 플랫폼 뷰는 다른 Flutter 콘텐츠와 통합될 수 있습니다. 이러한 각 위젯은 기본 운영 체제와의 중개 역할을 합니다. 예를 들어, 안드로이드에서 AndroidView는 세 가지 주요 기능을 수행합니다:
+
+- 네이티브 뷰에서 렌더링된 그래픽 텍스처의 복사본을 만들고, 매 프레임이 그려질 때 Flutter 렌더링된 서피스의 일부로 구성하기 위해 Flutter에 제시합니다.
+
+- 히트 테스트 및 입력 제스처에 응답하고, 이를 동등한 네이티브 입력으로 변환합니다.
+
+- 접근성 트리의 아날로그를 생성하고, 네이티브 레이어와 Flutter 레이어 간에 명령과 응답을 전달합니다.
+
+이러한 동기화와 관련하여 불가피하게 일정한 오버헤드가 발생합니다. 따라서 일반적으로 이 접근 방식은 Google Maps와 같이 Flutter에서 재구현하는 것이 실용적이지 않은 복잡한 컨트롤에 가장 적합합니다.
+
+일반적으로 Flutter 앱은 플랫폼 테스트를 기반으로 build() 메서드에서 이러한 위젯을 인스턴스화합니다. 예를 들어, google_maps_flutter 플러그인의 경우:
+
+```dart
+if (defaultTargetPlatform == TargetPlatform.android) {
+  return AndroidView(
+    viewType: 'plugins.flutter.io/google_maps',
+    onPlatformViewCreated: onPlatformViewCreated,
+    gestureRecognizers: gestureRecognizers,
+    creationParams: creationParams,
+    creationParamsCodec: const StandardMessageCodec(),
+  );
+} else if (defaultTargetPlatform == TargetPlatform.iOS) {
+  return UiKitView(
+    viewType: 'plugins.flutter.io/google_maps',
+    onPlatformViewCreated: onPlatformViewCreated,
+    gestureRecognizers: gestureRecognizers,
+    creationParams: creationParams,
+    creationParamsCodec: const StandardMessageCodec(),
+  );
+}
+return Text(
+    '$defaultTargetPlatform is not yet supported by the maps plugin');
+```
+
+AndroidView 또는 UiKitView의 기본 네이티브 코드와의 통신은 일반적으로 이전에 설명한 플랫폼 채널 메커니즘을 사용하여 이루어집니다.
+
+현재 플랫폼 뷰는 데스크톱 플랫폼에서 사용할 수 없지만, 이는 아키텍처적인 제한이 아니며, 향후 지원이 추가될 가능성이 있습니다.
+
+## 상위 앱에서 플러터 콘텐츠 호스팅 Hosting Flutter content in a parent app
+
+앞서 설명한 시나리오의 반대는 기존의 안드로이드 또는 iOS 앱에 Flutter 위젯을 임베드하는 것입니다. 이전 섹션에서 설명한 바와 같이, 모바일 장치에서 실행되는 새로 생성된 Flutter 앱은 안드로이드 Activity 또는 iOS UIViewController에서 호스팅됩니다. Flutter 콘텐츠는 동일한 임베딩 API를 사용하여 기존의 안드로이드 또는 iOS 앱에 임베드할 수 있습니다.
+
+Flutter 모듈 템플릿은 쉽게 임베딩할 수 있도록 설계되었습니다. 기존의 Gradle 또는 Xcode 빌드 정의에 소스 의존성으로 임베드하거나, 모든 개발자가 Flutter를 설치할 필요 없이 Android Archive 또는 iOS Framework 이진 파일로 컴파일하여 사용할 수 있습니다.
+
+Flutter 엔진은 Flutter 공유 라이브러리를 로드하고, Dart 런타임을 초기화하며, Dart isolate를 생성 및 실행하고, UI에 렌더링 서피스를 연결해야 하므로 초기화하는 데 짧은 시간이 소요됩니다. Flutter 콘텐츠를 표시할 때 UI 지연을 최소화하려면, 전체 앱 초기화 시퀀스 중에 Flutter 엔진을 초기화하거나 최소한 첫 번째 Flutter 화면 이전에 초기화하는 것이 좋습니다. 이렇게 하면 사용자가 첫 번째 Flutter 코드가 로드되는 동안 갑작스러운 중단을 경험하지 않게 됩니다. 또한, Flutter 엔진을 분리하면 여러 Flutter 화면 간에 재사용할 수 있으며, 필요한 라이브러리를 로드하는 데 드는 메모리 오버헤드를 공유할 수 있습니다.
+
+기존 안드로이드 또는 iOS 앱에 Flutter가 어떻게 로드되는지에 대한 자세한 정보는 "로드 순서, 성능 및 메모리" 주제에서 확인할 수 있습니다.
+
+## 플러터 웹 지원 Flutter web support
+
+Flutter가 지원하는 모든 플랫폼에 일반적인 아키텍처 개념이 적용되지만, Flutter의 웹 지원에는 주목할 만한 몇 가지 고유한 특성이 있습니다.
+
+Dart는 언어가 존재한 이래로 JavaScript로 컴파일되어 왔으며, 개발 및 프로덕션 용도로 최적화된 도구 체인을 갖추고 있습니다. 오늘날에도 많은 중요한 앱이 Dart에서 JavaScript로 컴파일되어 프로덕션 환경에서 실행되고 있으며, 그 중에는 Google Ads의 광고 도구도 포함됩니다. Flutter 프레임워크가 Dart로 작성되었기 때문에, 이를 JavaScript로 컴파일하는 것은 상대적으로 간단한 작업이었습니다.
+
+그러나 C++로 작성된 Flutter 엔진은 웹 브라우저가 아닌 기본 운영 체제와 인터페이스하도록 설계되었습니다. 따라서 다른 접근 방식이 필요합니다. 웹에서 Flutter는 표준 브라우저 API 위에 엔진을 재구현하여 제공합니다. 현재 웹에서 Flutter 콘텐츠를 렌더링하기 위한 두 가지 옵션이 있습니다: HTML과 WebGL입니다. HTML 모드에서는 Flutter가 HTML, CSS, 캔버스 및 SVG를 사용합니다. WebGL로 렌더링할 때 Flutter는 WebAssembly로 컴파일된 Skia 버전인 CanvasKit을 사용합니다. HTML 모드는 최고의 코드 크기 특성을 제공하지만, CanvasKit은 브라우저의 그래픽 스택으로 가는 가장 빠른 경로를 제공하며, 네이티브 모바일 타겟에 비해 다소 높은 그래픽 충실도를 제공합니다.
+
+웹 버전의 아키텍처 레이어 다이어그램은 다음과 같습니다:
+
+Flutter가 실행되는 다른 플랫폼과 비교했을 때 가장 주목할 만한 차이점은 Flutter가 Dart 런타임을 제공할 필요가 없다는 것입니다. 대신, Flutter 프레임워크(및 작성한 코드)는 JavaScript로 컴파일됩니다. 또한 Dart는 모든 모드(JIT 대 AOT, 네이티브 대 웹 컴파일)에서 언어 의미상의 차이가 매우 적다는 점도 주목할 만합니다. 대부분의 개발자는 이러한 차이를 겪는 코드를 한 줄도 작성하지 않을 것입니다.
+
+개발 중에 Flutter 웹은 증가형 컴파일을 지원하는 컴파일러인 dartdevc를 사용하여 핫 리스타트를 가능하게 합니다(현재 핫 리로드는 지원되지 않음). 반대로 웹용 프로덕션 앱을 만들 준비가 되었을 때는 Dart의 고도로 최적화된 프로덕션 JavaScript 컴파일러인 dart2js가 사용되어, Flutter 코어와 프레임워크를 애플리케이션과 함께 패키징하여 배포 가능한 최소화된 소스 파일로 만듭니다. 코드는 단일 파일로 제공되거나 지연 가져오기(deferred imports)를 통해 여러 파일로 분할될 수 있습니다.
+
+## 추가 정보 Further information
+
+Flutter 내부에 대한 더 많은 정보에 관심이 있는 분들을 위해, Inside Flutter 백서가 프레임워크의 설계 철학에 대한 유용한 안내서를 제공합니다.
+
+1. 빌드 함수는 새로 고침된 트리를 반환하지만, 새로운 구성을 통합해야 할 경우에만 다른 것을 반환하면 됩니다. 만약 구성이 실제로 동일하다면, 동일한 위젯을 반환하면 됩니다.
+
+2. 이는 읽기 쉽게 하기 위한 약간의 단순화입니다. 실제로는 트리가 더 복잡할 수 있습니다.
+
+3. 이 접근 방식에는 몇 가지 제한 사항이 있습니다. 예를 들어, 투명도는 다른 Flutter 위젯과 같은 방식으로 플랫폼 뷰에서 합성되지 않습니다.
+
+4. 하나의 예는 그림자입니다. 그림자는 DOM 동등 원시 객체로 근사화해야 하며, 이로 인해 다소 충실도가 저하됩니다.
